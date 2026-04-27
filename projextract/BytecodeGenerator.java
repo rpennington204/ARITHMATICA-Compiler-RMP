@@ -148,20 +148,7 @@ public class BytecodeGenerator {
 		        case "DOUBLE" -> emit("DSTORE " + sym.slot);
 		    }
 		}
-	/* 
-	 private void emitConst(Expr expr) {
-		    if (expr instanceof IntExpr i) {
-		        emit("BIPUSH " + i.value);
-		    }
-		    else if (expr instanceof DoubleExpr d) {
-		        emit("LDC2_W " + d.value); 
-		    }
-		}
 
-	 private boolean isNumber(String s) {
-	        return s.matches("-?\\d+(\\.\\d+)?");
-	 }
-	 */
 	 private void generateIf(IfStmt i) throws Exception { //generates code for if-then statements
 	        generateExpr(i.left);
 	        generateExpr(i.right);
