@@ -1,7 +1,11 @@
+/**
+ * This is the Lexer class. This takes the input stream of code, and stores each element as a token.
+ */
+
 import java.util.*;
 public class LexerPartial {
 	
-	public static int testKeyID(String testString, int initpos) {
+	public static int testKeyID(String testString, int initpos) { //Determines identifiers and keywords
 		int state = 0;
 		int curpos = initpos;
 		while (curpos < testString.length()) {
@@ -39,7 +43,7 @@ public class LexerPartial {
 	
 	static boolean isDouble;
 	
-	public static int testKeyNum (String testString, int initpos) {
+	public static int testKeyNum (String testString, int initpos) {// determines ints and doubles
 		isDouble = false;	//When the lexer sees a number, if it has a ".", this is set to true
 		int state = 0;
 		int curpos = initpos;
@@ -91,29 +95,29 @@ public class LexerPartial {
 			System.out.println(curind + ": " + tokenList);
 			char curChar = progStr.charAt(curind);
 			char nextChar = progStr.charAt(curind + 1);
-			if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n')){
+			if ((curChar == ' ') || (curChar == '\t') || (curChar == '\n')){ // checks whitespace
 				curind++;
-				//continue;
+				
 			}
-			//char nextChar = progStr.charAt(curind + 1);
-			else if ((curChar == '=') && (nextChar != '=')){
+			
+			else if ((curChar == '=') && (nextChar != '=')){ //checks assignment
 				tokenList.add(new Token("Assign", "="));
 				curind++;
 			}
-			else if (curChar == ';') {
+			else if (curChar == ';') { //checks end of statements
 				tokenList.add(new Token("eos",";"));
 				curind++;
 			}
-			else if ((curChar == '+') || (curChar == '/') || (curChar == '*')) {
+			else if ((curChar == '+') || (curChar == '/') || (curChar == '*')) { //checks arithmetic ops (other than -)
 				tokenList.add(new Token("aop",curChar+""));
 				curind++;
 			}
-			else if (curChar == '-') {
+			else if (curChar == '-') { //checks whether - is subtraction or negation
 				if ((nextChar == ' ') || (nextChar == '\t') || (nextChar == '\n')) {
 					tokenList.add(new Token("aop",curChar+""));
 					curind++;
 				}
-				else if (Character.isDigit(nextChar)) {
+				else if (Character.isDigit(nextChar)) { 
 					endind = testKeyNum(progStr, curind);
 					if (endind > 0) {
 						if (isDouble) {
@@ -129,15 +133,20 @@ public class LexerPartial {
 				}
 				else throw new Exception("Lexical Error: Invalid \'-\'");
 			}
-			else if (Character.isLetter(curChar)) {
+			else if (Character.isLetter(curChar)) { //checks keywords or ids
 				endind = testKeyID(progStr, curind);
 				if (endind > 0) {
-					tokenList.add(new Token("idkey",progStr.substring(curind, endind + 1)));
+					if (progStr.substring(curind, endind + 1).equals("IF" ) || progStr.substring(curind, endind + 1).equals("THEN")
+							|| progStr.substring(curind, endind + 1).equals("INT") || progStr.substring(curind, endind + 1).equals("DOUBLE") 
+							|| progStr.substring(curind, endind + 1).equals("PRINT") || progStr.substring(curind, endind + 1).equals("INPUT")) {
+						tokenList.add(new Token("keyword",progStr.substring(curind, endind + 1)));
+					}
+					else { tokenList.add(new Token("id",progStr.substring(curind, endind + 1)));}
 					curind = endind + 1;
 				}
 				else throw new Exception ("Lexical Error: Unkown Token");
 			}
-			else if (Character.isDigit(curChar)) {
+			else if (Character.isDigit(curChar)) { //checks ints and doubles
 				endind = testKeyNum(progStr, curind);
 				if (endind > 0) {
 					if (isDouble) {
@@ -151,8 +160,8 @@ public class LexerPartial {
 				}
 				else throw new Exception ("Lexical Error: Unkown Token");
 			}
-			else if (curChar == '<' || curChar == '>' || (curChar == '!'  && nextChar == '=') || (curChar == '=' && nextChar == '=')) {
-				if ((curChar == '<' || curChar == '>') && (nextChar == '=')) {
+			else if (curChar == '<' || curChar == '>' || (curChar == '!'  && nextChar == '=') || (curChar == '=' && nextChar == '=')) { //checks comparisions
+				if ((curChar == '<' || curChar == '>') && (nextChar == '=')) { 
 					tokenList.add(new Token("comp", curChar + "" + nextChar));
 					curind = curind + 2;
 				}
@@ -167,7 +176,7 @@ public class LexerPartial {
 			}
 			else {
 				throw new Exception ("Lexical Error: Unkown Token");
-				//curind++;
+				
 			}
 		}
 		
